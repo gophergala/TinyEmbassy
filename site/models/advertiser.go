@@ -8,7 +8,7 @@
 package models
 
 import (
-	"gopkg.in/mgo.v2/bson"
+	"labix.org/v2/mgo/bson"
 )
 
 type Advertiser struct {
@@ -16,9 +16,14 @@ type Advertiser struct {
 	Email         string        `json:"email" bson:"email"`
 	Img           string        `json:"img"  bson:"img,omitempty"`
 	Name          string        `json:"name" bson:"name"`
-	EmailVerified bool
+	EmailVerified bool          `json:"verified" bson:"verified"`
 	Pass          string
-	Campaigns     []Campaign
+	CampaignList  []CampaignIteams `json:"camp_list" bson:"camp_list"`
+}
+
+type CampaignIteams struct {
+	Id   bson.ObjectId `json:camp_id" bson:"camp_id,omitempty"`
+	Name string        `json:name" bson:"name,omitempty"`
 }
 
 func (user *Advertiser) Validator() error {

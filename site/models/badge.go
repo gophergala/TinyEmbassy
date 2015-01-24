@@ -1,13 +1,14 @@
 package models
 
 import (
-	"gopkg.in/mgo.v2/bson"
+// "labix.org/v2/mgo/bson"
 )
 
 type Badge struct {
-	Id       bson.ObjectId `json:badge_id" bson:"_id,omitempty"`
-	IamgeURL string        `json:"imageURL, bson:"imageURL"`
-	Size     ImageSize
+	Id        string `json:badge" bson:"id,omitempty"`
+	IamgeURL  string `json:"image_url", bson:"imageurl"`
+	S3BadgeId string `json:"_", bson:"s3_badge_id"`
+	Size      ImageSize
 }
 
 type ImageSize struct {

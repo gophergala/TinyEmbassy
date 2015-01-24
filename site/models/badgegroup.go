@@ -1,13 +1,13 @@
 package models
 
 import (
-	"gopkg.in/mgo.v2/bson"
+	"labix.org/v2/mgo/bson"
 )
 
 type BadgeGroup struct {
-	Id          bson.ObjectId `json:"group_id" bson:"_id,omitempty"`
-	Title       string        `json:"title" bson:"title"`
-	Description string        `json:"description" bson:"description"`
-	TargetURL   string        `json:"target_url" bson:"targeturl"`
-	Badges      []Badge
+	BadgeGroupId bson.ObjectId `json:"group_id" bson:"_id,omitempty"`
+	CampaignId   bson.ObjectId `json:"campaign_id" bson:"_id,omitempty"`
+	Title        string        `json:"title" bson:"title"`
+	TargetURL    string        `json:"target_url" bson:"targeturl"`
+	Badges       []Badge
 }

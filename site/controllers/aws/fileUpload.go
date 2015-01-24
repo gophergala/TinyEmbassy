@@ -23,7 +23,7 @@ const (
 type FileUpload struct {
 }
 
-func (this *FileUpload) FileUploadFromPath(localPath string, campaign string, badge string) (err error) {
+func (this *FileUpload) FileUploadFromPath(localPath string, campaign string, badgeGrp string, badge string) (err error, url string) {
 
 	AWSAuth := aws.Auth{
 		AccessKey: accesskey,
@@ -37,7 +37,7 @@ func (this *FileUpload) FileUploadFromPath(localPath string, campaign string, ba
 	bucket := connection.Bucket(bucket)
 
 	//Path for images
-	s := []string{s3Path, campaign, badge}
+	s := []string{s3Path, campaign, badgeGrp, badge}
 	// path := append(s3Path, "/", campaign, "/", badge)
 	path := strings.Join(s, "/")
 	fmt.Println(path)
@@ -46,7 +46,7 @@ func (this *FileUpload) FileUploadFromPath(localPath string, campaign string, ba
 
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return err, ""
 	}
 
 	defer file.Close()
@@ -64,17 +64,17 @@ func (this *FileUpload) FileUploadFromPath(localPath string, campaign string, ba
 	filetype := http.DetectContentType(bytes)
 
 	//upload file to S3
-	err = bucket.Put(path, bytes, filetype, s3.ACL("private"))
+	err = bucket.Put(path, bytes, filetype, s3.ACL("public-read"))
 
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return err, ""
 	}
-
-	return
+	s = []string{"https://s3.amazonaws.com/", s3Path, campaign, badgeGrp, badge}
+	return nil, strings.Join(s, "/")
 }
 
-func (this *FileUpload) UploadToS3(data []byte, campaign string, badge string) (err error) {
+func (this *FileUpload) UploadToS3(data []byte, campaign string, badgeGrp string, badge string) (err error, url string) {
 	AWSAuth := aws.Auth{
 		AccessKey: accesskey,
 		SecretKey: secretKey,
@@ -87,7 +87,7 @@ func (this *FileUpload) UploadToS3(data []byte, campaign string, badge string) (
 	bucket := connection.Bucket(bucket)
 
 	//Path for images
-	s := []string{s3Path, campaign, badge}
+	s := []string{s3Path, campaign, badgeGrp, badge}
 	// path := append(s3Path, "/", campaign, "/", badge)
 	path := strings.Join(s, "/")
 
@@ -99,7 +99,9 @@ func (this *FileUpload) UploadToS3(data []byte, campaign string, badge string) (
 
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return err, ""
 	}
-	return
+
+	s = []string{"https://s3.amazonaws.com/", s3Path, campaign, badgeGrp, badge}
+	return nil, strings.Join(s, "/")
 }

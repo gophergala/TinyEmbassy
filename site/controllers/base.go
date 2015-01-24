@@ -24,10 +24,14 @@ type Config struct {
 
 var conf Config
 
-var store = sessions.NewCookieStore([]byte("secret-wish-sting"))
+var store = sessions.NewCookieStore([]byte("DellStudiow-Laptop-as-Desktop"))
 
 var templates = template.Must(template.ParseFiles(
 	"static/template/landing.html",
+	"static/template/error.html",
+	"static/template/login.html",
+	"static/template/SignUp.html",
+	"static/template/CPG.html",
 ))
 
 func render(w http.ResponseWriter, tmpl string) {
@@ -66,7 +70,19 @@ func init() {
 }
 
 //
-func Landing(w http.ResponseWriter, r *http.Request) {
+func TLanding(w http.ResponseWriter, r *http.Request) {
 	render(w, "landing.html")
+	return
+}
+func TSignUp(w http.ResponseWriter, r *http.Request) {
+	render(w, "SignUp.html")
+	return
+}
+func TLogin(w http.ResponseWriter, r *http.Request) {
+	render(w, "login.html")
+	return
+}
+func TLogout(w http.ResponseWriter, r *http.Request) {
+	render(w, "logout.html")
 	return
 }
