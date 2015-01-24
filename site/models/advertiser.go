@@ -12,10 +12,13 @@ import (
 )
 
 type Advertiser struct {
-	Id    bson.ObjectId `json:"-" bson:"_id,omitempty"`
-	Email string        `json:"email" bson:"email"`
-	Img   string        `json:"img"  bson:"img,omitempty"`
-	Pass  string
+	Id            bson.ObjectId `json:"-" bson:"_id,omitempty"`
+	Email         string        `json:"email" bson:"email"`
+	Img           string        `json:"img"  bson:"img,omitempty"`
+	Name          string        `json:"name" bson:"name"`
+	EmailVerified bool
+	Pass          string
+	Campaigns     []Campaign
 }
 
 func (user *Advertiser) Validator() error {
