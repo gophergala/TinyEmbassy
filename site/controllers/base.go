@@ -31,6 +31,7 @@ var templates = template.Must(template.ParseFiles(
 	"static/template/error.html",
 	"static/template/login.html",
 	"static/template/SignUp.html",
+	"static/template/logout.html",
 	"static/template/CPG.html",
 ))
 

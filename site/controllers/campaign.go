@@ -25,7 +25,7 @@ func CreateCampaign(rw http.ResponseWriter, req *http.Request) {
 	websession, _ := store.Get(req, "pp-session")
 	fmt.Println(websession)
 
-	advertiserId := websession.Values["id"].(bson.ObjectId)
+	advertiser := websession.Values["id"].(*models.Advertiser)
 	fmt.Println(websession)
 	session, err := mgo.Dial("mongodb://te:te@flame.mongohq.com:27098/routesq")
 	if err != nil {
@@ -38,7 +38,7 @@ func CreateCampaign(rw http.ResponseWriter, req *http.Request) {
 	result := models.Campaign{}
 	err = c.Find(bson.M{"CamapignName": camapignName}).One(&result)
 	if err != nil {
-		doc := models.Campaign{CampaignId: bson.NewObjectId(), AdvertiserId: advertiserId, RootURL: rootURL, CamapignName: camapignName}
+		doc := models.Campaign{CampaignId: bson.NewObjectId(), AdvertiserId: advertiser.Id, RootURL: rootURL, CamapignName: camapignName}
 		err = c.Insert(doc)
 		if err != nil {
 			fmt.Printf("Can't insert document: %v\n", err)
