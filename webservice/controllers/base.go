@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 11:26:29
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-24 13:56:27
+* @Last Modified time: 2015-01-24 19:06:54
  */
 
 package controllers
@@ -11,7 +11,11 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gorilla/sessions"
-	//"html/template"
+	// "html/template"
+	"fmt"
+	"github.com/gophergala/tinyembassy/webservice/models"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -36,6 +40,8 @@ var store = sessions.NewCookieStore([]byte("tim-tim-tok"))
 // 		http.Error(w, err.Error(), http.StatusInternalServerError)
 // 	}
 // }
+
+var counter models.CampaignCounter
 
 func dispatchRedirect(w http.ResponseWriter, r *http.Request, url string) {
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate") // HTTP 1.1.
@@ -74,5 +80,23 @@ func init() {
 	err = json.Unmarshal(content, &conf)
 	if err != nil {
 		panic(err)
+	}
+	initCollectiohn()
+}
+
+func initCollectiohn() {
+	s, err := mgo.Dial(conf.DbURI)
+	if err != nil {
+		panic(err)
+	}
+	defer s.Close()
+	s.SetSafe(&mgo.Safe{})
+	c := s.DB(conf.DbName).C("counter")
+	counter = models.CampaignCounter{Id: bson.NewObjectId()}
+
+	err = c.Insert(counter)
+	if err != nil {
+		fmt.Printf("Can't insert document: %v\n", err)
+		os.Exit(1)
 	}
 }
