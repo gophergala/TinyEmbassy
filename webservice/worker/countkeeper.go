@@ -1,11 +1,11 @@
 /*
 * @Author: souravray
-* @Date:   2015-01-24 12:23:16
+* @Date:   2015-01-25 01:02:42
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 00:54:40
+* @Last Modified time: 2015-01-25 02:14:27
  */
 
-package controllers
+package worker
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-func RedirectImage(w http.ResponseWriter, r *http.Request) {
+func Z(t time, badge string, publisher string, campaing string, counter []string) {
 	s, err := mgo.Dial(conf.DbURI)
 	if err != nil {
 		panic(err)
@@ -27,7 +27,6 @@ func RedirectImage(w http.ResponseWriter, r *http.Request) {
 	s.SetSafe(&mgo.Safe{})
 	c := s.DB(conf.DbName).C("counter")
 	fmt.Println(counter.Id)
-	t := time.Now()
 	hour := fmt.Sprintf("t.h.%d%02d%02d%02d%02d%02d.i",
 		t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
 
@@ -36,16 +35,4 @@ func RedirectImage(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Can't update document %v\n", err)
 		os.Exit(1)
 	}
-
-	log.Println("https://s3.amazonaws.com/mazibucket/imageData/testCamapign/gopher.png")
-	dispatchRedirect(w, r, "https://s3.amazonaws.com/mazibucket/imageData/testCamapign/gopher.png")
-}
-
-func RedirectTargetURL(w http.ResponseWriter, r *http.Request) {
-	log.Println("http://gophergala.com/prizes")
-	dispatchRedirect(w, r, "http://gophergala.com/prizes/")
-}
-
-func DataPoint(w http.ResponseWriter, r *http.Request) {
-
 }
