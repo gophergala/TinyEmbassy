@@ -1,0 +1,4 @@
+{
+	"db_uri": "mongodb://te:te@flame.mongohq.com:27098/routesq",
+	"db_name": "routesq"
+}
