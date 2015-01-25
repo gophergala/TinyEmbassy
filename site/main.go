@@ -8,10 +8,11 @@
 package main
 
 import (
-	// "encoding/gob"
-	// "github.com/gophergala/tinyembassy/site/models"
+	"encoding/gob"
+	"github.com/gophergala/tinyembassy/site/models"
 	"github.com/gophergala/tinyembassy/site/router"
 	"github.com/gorilla/mux"
+	// "labix.org/v2/mgo/bson"
 	"log"
 	"net/http"
 	"os"
@@ -24,7 +25,7 @@ func main() {
 	http.Handle("/", rtr)
 
 	// //registr Advertiser object to be serialized in seesion object
-	// gob.Register(&models.Advertiser{})
+	gob.Register(&models.Advertiser{})
 
 	// start server here
 	log.Println("Listening...")

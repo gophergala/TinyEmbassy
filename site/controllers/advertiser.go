@@ -35,9 +35,7 @@ func Login(rw http.ResponseWriter, req *http.Request) {
 	} else {
 		if result.Pass == encryptedPass {
 			fmt.Println("advertiser exist, password matched..")
-
-			// Set some session values.
-			websession.Values["id"] = result.Id
+			websession.Values["id"] = result
 			websession.Save(req, rw)
 			fmt.Println(rw)
 			render(rw, "landing.html")
@@ -51,13 +49,9 @@ func Login(rw http.ResponseWriter, req *http.Request) {
 
 func Logout(rw http.ResponseWriter, req *http.Request) {
 	fmt.Println("Logout....")
-	// Logout, clean session
 	websession, _ := store.Get(req, "pp-session")
-	// Get the previously flashes, if any.
-	if flashes := websession.Flashes(); len(flashes) > 0 {
-		// Just print the flash values.
-		fmt.Fprint(rw, "%v", flashes)
-	}
+	websession.Options.MaxAge = -1
+	websession.Save(req, rw)
 }
 
 func Signup(rw http.ResponseWriter, req *http.Request) {
@@ -66,7 +60,7 @@ func Signup(rw http.ResponseWriter, req *http.Request) {
 	name := req.FormValue("name")
 	fmt.Println(email + pass + name)
 	ecrypedPasswd := pass  //TODO: encrypt password
-	emailVerified := false //TODO:
+	emailVerified := false //TODO: Implement later..
 
 	s, err := mgo.Dial(conf.DbURI)
 	if err != nil {
@@ -87,7 +81,7 @@ func Signup(rw http.ResponseWriter, req *http.Request) {
 		} else {
 			// Set some session values.
 			websession, _ := store.Get(req, "pp-session")
-			websession.Values["id"] = doc.Id
+			websession.Values["id"] = doc
 			websession.Save(req, rw)
 			fmt.Println(websession)
 			render(rw, "landing.html")
