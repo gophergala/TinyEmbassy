@@ -89,7 +89,7 @@ func CreateBadgeGroup(rw http.ResponseWriter, req *http.Request) {
 	if err == nil {
 		bc := session.DB(conf.DbName).C("badgeGroup")
 		badgeGroup := models.BadgeGroup{}
-		err = bc.Find(bson.M{"title": title, "_campaign_id": campaign.CampaignId}).One(&badgeGroup)
+		err = bc.Find(bson.M{"title": title, "campaign_id": campaign.CampaignId}).One(&badgeGroup)
 		if err != nil {
 			doc := models.BadgeGroup{BadgeGroupId: bson.NewObjectId(), CampaignId: campaign.CampaignId, Title: title, TargetURL: targetURL}
 			err = bc.Insert(doc)

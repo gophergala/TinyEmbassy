@@ -30,6 +30,7 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 	campaigntitle := req.FormValue("campaigntitle")
 	badgeGroupName := req.FormValue("badgeGroupName")
 
+	fmt.Println(campaigntitle + badgeGroupName)
 	//Upload image data
 	f := aws.FileUpload{}
 
@@ -87,7 +88,8 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 	if err == nil {
 		bc := session.DB(conf.DbName).C("badgeGroup")
 		badgeGroup := models.BadgeGroup{}
-		err = bc.Find(bson.M{"title": badgeGroupName, "_campaign_id": campaign.CampaignId}).One(&badgeGroup)
+		fmt.Println(campaign.CampaignId)
+		err = bc.Find(bson.M{"title": badgeGroupName, "campaign_id": campaign.CampaignId}).One(&badgeGroup)
 		if err == nil {
 
 			err1, s3Url := f.UploadToS3(bytes, campaigntitle, Id)
@@ -112,7 +114,7 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 				render(rw, "landing.html")
 			}
 		} else {
-			fmt.Println("badge already exist...")
+			fmt.Println("Group does not exist...")
 			fmt.Println(err)
 			render(rw, "error.html")
 		}
