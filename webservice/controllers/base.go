@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 11:26:29
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-24 19:06:54
+* @Last Modified time: 2015-01-25 06:10:01
  */
 
 package controllers
@@ -14,9 +14,10 @@ import (
 	// "html/template"
 	"fmt"
 	"github.com/gophergala/tinyembassy/webservice/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/gophergala/tinyembassy/webservice/stacker"
 	"io/ioutil"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"net/http"
 	"os"
 )
@@ -27,7 +28,7 @@ type Config struct {
 }
 
 var conf Config
-
+var jobqueue *stacker.Stacker
 var store = sessions.NewCookieStore([]byte("tim-tim-tok"))
 
 // var templates = template.Must(template.ParseFiles(
@@ -67,6 +68,8 @@ func dispatchJSON(w http.ResponseWriter, response interface{}) {
 }
 
 func init() {
+	jobqueue, _ = stacker.GetStacker(250, 100)
+	go jobqueue.Start()
 	configpath := os.Getenv("TE_CONF_PATH")
 	if configpath == "" {
 		configpath = "/tmp/config.json"
