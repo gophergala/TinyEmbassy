@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 11:26:29
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 09:28:14
+* @Last Modified time: 2015-01-25 11:27:03
  */
 
 package controllers
@@ -16,9 +16,9 @@ import (
 	"fmt"
 	"github.com/gophergala/tinyembassy/webservice/models"
 	"github.com/gophergala/tinyembassy/webservice/stacker"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
 	"net/http"
 	"os"
 )

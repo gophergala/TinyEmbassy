@@ -2,13 +2,13 @@
 * @Author: souravray
 * @Date:   2015-01-25 07:33:48
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 07:43:23
+* @Last Modified time: 2015-01-25 11:26:58
  */
 
 package models
 
 import (
-	"labix.org/v2/mgo/bson"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type BadgeGroup struct {

@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-25 05:43:22
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 05:50:51
+* @Last Modified time: 2015-01-25 11:26:46
  */
 
 package worker
@@ -10,8 +10,8 @@ package worker
 import (
 	"fmt"
 	//"github.com/gophergala/tinyembassy/webservice/models"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 	"os"
 	"time"
 )
