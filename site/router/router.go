@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 10:47:03
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-24 10:57:59
+* @Last Modified time: 2015-01-25 02:35:47
  */
 
 package router
@@ -19,6 +19,7 @@ func Routes(rtr *mux.Router) {
 	rtr.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(http.Dir("./static/img"))))
 	rtr.PathPrefix("/style/").Handler(http.StripPrefix("/style/", http.FileServer(http.Dir("./static/style"))))
 	rtr.PathPrefix("/template/").Handler(http.StripPrefix("/template/", http.FileServer(http.Dir("./static/template"))))
+	rtr.PathPrefix("/pub/").Handler(http.StripPrefix("/pub/", http.FileServer(http.Dir("./static/publishersBadge"))))
 
 	//Home page
 	rtr.HandleFunc("/", controllers.TLanding).Methods("GET").Name("Homepage")

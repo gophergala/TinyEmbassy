@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 11:26:29
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 06:10:01
+* @Last Modified time: 2015-01-25 09:28:14
  */
 
 package controllers
@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gorilla/sessions"
+	"github.com/koding/cache"
 	// "html/template"
 	"fmt"
 	"github.com/gophergala/tinyembassy/webservice/models"
@@ -23,12 +24,14 @@ import (
 )
 
 type Config struct {
-	DbURI  string `json:"db_uri"`
-	DbName string `json:"db_name"`
+	DbURI      string `json:"db_uri"`
+	DbName     string `json:"db_name"`
+	CatcheSize int    `json:"catche_size"`
 }
 
 var conf Config
 var jobqueue *stacker.Stacker
+var lruCatche cache.Cache
 var store = sessions.NewCookieStore([]byte("tim-tim-tok"))
 
 // var templates = template.Must(template.ParseFiles(
@@ -70,6 +73,8 @@ func dispatchJSON(w http.ResponseWriter, response interface{}) {
 func init() {
 	jobqueue, _ = stacker.GetStacker(250, 100)
 	go jobqueue.Start()
+
+	lruCatche = cache.NewLRU(500)
 	configpath := os.Getenv("TE_CONF_PATH")
 	if configpath == "" {
 		configpath = "/tmp/config.json"

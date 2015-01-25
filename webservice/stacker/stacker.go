@@ -2,13 +2,12 @@
 * @Author: souravray
 * @Date:   2015-01-25 03:28:47
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 06:03:49
+* @Last Modified time: 2015-01-25 09:29:43
  */
 
 package stacker
 
 import (
-	"fmt"
 	"github.com/gophergala/tinyembassy/webservice/stacker/worker"
 	"math"
 )
@@ -47,7 +46,6 @@ func (s *Stacker) Start() {
 			n := <-s.bucket.Take(s.churnRate)
 			for i := int32(0); i < n; i++ {
 				job := s.Pop()
-				fmt.Println("Shoveling", job)
 				if job != nil {
 					go Shoveler(s, job)
 					// go func(s *Stacker, w W.Interface, payload url.Values) {
