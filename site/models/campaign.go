@@ -1,18 +1,28 @@
 package models
 
 import (
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
 type Campaign struct {
-	CampaignId     bson.ObjectId     `json:"campaign_id" bson:"_id,omitempty"`
-	AdvertiserId   bson.ObjectId     `json:"_" bson:"advertiser_id,omitempty"`
-	RootURL        string            `json:"root_url" bson:"rooturl"`
-	CamapignName   string            `json:"campaign_name" bson:"campaignName"`
-	BadgeGroupList []BadgeGroupIteam `json:"badge_group_lis" bson:"badge_group_list"`
+	Id           bson.ObjectId `json:"id" bson:"_id,omitempty"`
+	AdvertiserId bson.ObjectId `json:"_" bson:"advertiser_id,omitempty"`
+	URLRoot      string        `json:"url_root" bson:"url_root"`
+	Name         string        `json:"campaign_name" bson:"campaign_name,omitempty"`
 }
 
-type BadgeGroupIteam struct {
-	Id    bson.ObjectId `json:badge_group_id" bson:"badge_group_id,omitempty"`
-	Title string        `json:"title" bson:"title"`
+func (camp *Campaign) ValidateURLRoot() error {
+
+	if !URLRootRegexp.MatchString(camp.URLRoot) {
+		return ErrInvalidURLRoot
+	}
+	return nil
+}
+
+// unique index
+var URIIndex = mgo.Index{
+	Key:    []string{"url_root"},
+	Unique: true,
+	Sparse: false,
 }

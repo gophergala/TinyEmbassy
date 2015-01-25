@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 10:35:13
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-24 10:59:22
+* @Last Modified time: 2015-01-25 22:38:41
  */
 
 package controllers
@@ -30,11 +30,12 @@ var templates = template.Must(template.ParseFiles(
 	"static/template/landing.html",
 	"static/template/error.html",
 	"static/template/login.html",
-	"static/template/SignUp.html",
+	"static/template/signup.html",
 	"static/template/logout.html",
 	"static/template/CPG.html",
 	"static/template/CBG.html",
 	"static/template/badge.html",
+	"static/template/campaignregistration.html",
 ))
 
 func render(w http.ResponseWriter, tmpl string) {
@@ -72,20 +73,20 @@ func init() {
 	}
 }
 
-//
-func TLanding(w http.ResponseWriter, r *http.Request) {
-	render(w, "landing.html")
-	return
+func IsAuth(req *http.Request) bool {
+	websession, _ := store.Get(req, "pp-session")
+
+	if websession.Values["id"] != nil {
+		return true
+	}
+	return false
 }
-func TSignUp(w http.ResponseWriter, r *http.Request) {
-	render(w, "SignUp.html")
-	return
-}
-func TLogin(w http.ResponseWriter, r *http.Request) {
-	render(w, "login.html")
-	return
-}
-func TLogout(w http.ResponseWriter, r *http.Request) {
-	render(w, "logout.html")
+
+// controler for site root
+func LandingPage(rw http.ResponseWriter, req *http.Request) {
+	if IsAuth(req) {
+		http.Redirect(rw, req, "/campaign/create", 301)
+	}
+	render(rw, "landing.html")
 	return
 }

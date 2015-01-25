@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 10:47:03
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-25 02:35:47
+* @Last Modified time: 2015-01-25 23:41:14
  */
 
 package router
@@ -19,39 +19,28 @@ func Routes(rtr *mux.Router) {
 	rtr.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(http.Dir("./static/img"))))
 	rtr.PathPrefix("/style/").Handler(http.StripPrefix("/style/", http.FileServer(http.Dir("./static/style"))))
 	rtr.PathPrefix("/template/").Handler(http.StripPrefix("/template/", http.FileServer(http.Dir("./static/template"))))
-	rtr.PathPrefix("/pub/").Handler(http.StripPrefix("/pub/", http.FileServer(http.Dir("./static/publishersBadge"))))
 
-	//Home page
-	rtr.HandleFunc("/", controllers.TLanding).Methods("GET").Name("Homepage")
-	rtr.HandleFunc("/login", controllers.TLogin).Methods("GET").Name("TLogin")
-	rtr.HandleFunc("/signUp", controllers.TSignUp).Methods("GET").Name("TSignUp")
-	rtr.HandleFunc("/logout", controllers.TLogout).Methods("GET").Name("TLogout")
+	//basic navigations
+	rtr.HandleFunc("/", controllers.LandingPage).Methods("GET").Name("Homepage")
+	rtr.HandleFunc("/signin", controllers.LoginPage).Methods("GET").Name("LoginPage")
+	rtr.HandleFunc("/signin", controllers.Login).Methods("POST").Name("LoginRequest")
+	rtr.HandleFunc("/signup", controllers.SignupPage).Methods("GET").Name("SignupPage")
+	rtr.HandleFunc("/signup", controllers.Signup).Methods("POST").Name("SignupRequest")
+	rtr.HandleFunc("/logout", controllers.Logout).Methods("GET").Name("LogoutRequest")
 
-	// Advertiser routes
-	apiSubrtr := rtr.PathPrefix("/advertiser").Subrouter()
-	apiSubrtr.HandleFunc("/signup", controllers.Signup).Methods("POST").Name("Signup")
-	apiSubrtr.HandleFunc("/login", controllers.Login).Methods("POST").Name("Login")
-	apiSubrtr.HandleFunc("/logout", controllers.Logout).Methods("POST").Name("Logout")
+	campSubrtr := rtr.PathPrefix("/campaign").Subrouter()
+	campSubrtr.HandleFunc("/create", controllers.CreateCampaignPage).Methods("GET").Name("CreateCampaignPage")
+	campSubrtr.HandleFunc("/create", controllers.CreateCampaign).Methods("POST").Name("CreateCampaignRequest")
 
-	apiSubrtr1 := rtr.PathPrefix("/campaign").Subrouter()
-	apiSubrtr1.HandleFunc("/createCampaign", controllers.CreateCampaign).Methods("POST").Name("CreateCampaign")
-	apiSubrtr1.HandleFunc("/getCampaignData", controllers.GetCampaignData).Methods("POST").Name("GetCampaignData")
-	apiSubrtr1.HandleFunc("/createBadgeGroup", controllers.CreateBadgeGroup).Methods("POST").Name("CreateBadgeGroup")
+	// badge board
+	badgeSubrtr := rtr.PathPrefix("/b").Subrouter()
+	badgeSubrtr.HandleFunc("/{camp_uri}", controllers.BoardPage).Methods("GET").Name("CreateCampaignPage")
 
-	//TEST pages
-	apiSubrtr1.HandleFunc("/createCampaignPG", controllers.CPG).Methods("GET").Name("CPG")
-	apiSubrtr1.HandleFunc("/createCampaignBG", controllers.CBG).Methods("GET").Name("CPG")
+	// groupSubrtr := rtr.PathPrefix("/group").Subrouter()
+	// groupSubrtr.HandleFunc("/create", controllers.CBG).Methods("GET").Name("CreateBadgeGroupPage")
+	// groupSubrtr.HandleFunc("/create", controllers.CreateBadgeGroup).Methods("POST").Name("CreateBadgeGroupRequest")
 
-	apiSubrtr2 := rtr.PathPrefix("/badge").Subrouter()
-	apiSubrtr2.HandleFunc("/createBadgeT", controllers.CreateBadgeT).Methods("GET").Name("CreateBadgeT")
-	apiSubrtr2.HandleFunc("/createBadge", controllers.CreateBadge).Methods("POST").Name("CreateBadge")
-	apiSubrtr2.HandleFunc("/getBadgeData", controllers.GetBadgeData).Methods("POST").Name("GetBadgeData")
-
-	// web routes
-	// apiSubrtr := rtr.PathPrefix("/web").Subrouter()
-	// apiSubrtr.HandleFunc("/advertiser", controllers.SignIn).Methods("POST").Name("LogIn")")
-
-	// api routes
-	// apiSubrtr := rtr.PathPrefix("/api").Subrouter()
-	// apiSubrtr.HandleFunc("/campaings", controllers.SignIn).Methods("GET").Name("GetCampaignList")")
+	// badgeSubrtr := rtr.PathPrefix("/badge").Subrouter()
+	// badgeSubrtr.HandleFunc("/create", controllers.CreateBadgeT).Methods("GET").Name("CreateBadgePage")
+	// badgeSubrtr.HandleFunc("/create", controllers.CreateBadge).Methods("POST").Name("CreateBadgeRequest")
 }

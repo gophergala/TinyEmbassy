@@ -5,8 +5,8 @@ import (
 )
 
 type BadgeGroup struct {
-	BadgeGroupId bson.ObjectId `json:"group_id" bson:"_id,omitempty"`
-	CampaignId   bson.ObjectId `json:"campaign_id" bson:"campaign_id,omitempty"`
+	Id           bson.ObjectId `json:"id" bson:"_id,omitempty"`
+	CampaignUUId string        `json:"campaign_uuid" bson:"campaign_uuid,omitempty"`
 	Title        string        `json:"title" bson:"title"`
 	TargetURL    string        `json:"target_url" bson:"targeturl"`
 	Badges       []Badge

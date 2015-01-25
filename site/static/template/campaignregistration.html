@@ -33,22 +33,22 @@
       <div class="header">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="#">Sign in</a></li>
-            <li role="presentation"><a href="/signup">Sign up</a></li>
+            <li role="presentation"><a href="/logout">Logout</a></li>
           </ul>
         </nav>
         <h3 class="text-muted">Tiny Embassy</h3>
       </div>
 
       <div class="jumbotron">
-      	<h2 class="form-signin-heading">Please sign in</h2>
-	    <form class="form-signin" action="/signin" method="POST">
-	        <label for="email" class="sr-only">Email address</label>
-	        <input type="email" id="email" name="email" class="form-control" placeholder="Email address" required="" autofocus="">
-	        <label for="pass" class="sr-only">Password</label>
-	        <input type="password" id="pass" name="pass" class="form-control" placeholder="Password" required="">
-	        
-	        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      	<h2 class="form-signin-heading">Register your badge board</h2>
+	    <form class="form-signin" action="/campaign/create" method="POST">
+	        <h4>Choose you board URL</h4>
+	        <br/>
+	        <p> tinyembassy.com/b/
+		        <input type="text" id="urlroot" name="urlroot" class="form-control inline-input" placeholder="" required="" autofocus="">
+	    	</p>
+	        <br/>
+	        <button class="btn btn-lg btn-primary btn-block" type="submit">Continue</button>
 	    </form>
       </div>
 
