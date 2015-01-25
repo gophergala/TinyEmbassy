@@ -2,7 +2,7 @@
 * @Author: souravray
 * @Date:   2015-01-24 11:30:37
 * @Last Modified by:   souravray
-* @Last Modified time: 2015-01-24 23:07:39
+* @Last Modified time: 2015-01-25 03:10:49
  */
 
 package router
@@ -16,10 +16,10 @@ import (
 func Routes(rtr *mux.Router) {
 
 	// web pages routes
-	webSubrtr := rtr.PathPrefix("/web/{camp}").Subrouter()
-	webSubrtr.HandleFunc("/login", controllers.Landing).Methods("GET").Name("LogIn")
-	webSubrtr.HandleFunc("/login", controllers.SignIn).Methods("POST").Name("LogIn")
-	webSubrtr.HandleFunc("/badge", controllers.GetBadge).Methods("GET").Name("LogIn")
+	// webSubrtr := rtr.PathPrefix("/web/{camp}").Subrouter()
+	// webSubrtr.HandleFunc("/login", controllers.Landing).Methods("GET").Name("LogIn")
+	// webSubrtr.HandleFunc("/login", controllers.SignIn).Methods("POST").Name("LogIn")
+	// webSubrtr.HandleFunc("/badge", controllers.GetBadge).Methods("GET").Name("LogIn")
 
 	//track routes
 	apiSubrtr := rtr.PathPrefix("/track").Subrouter()
