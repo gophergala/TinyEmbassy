@@ -18,24 +18,48 @@ import (
 
 	"bufio"
 	"github.com/gophergala/tinyembassy/site/controllers/aws"
-	"log"
+	"io"
+	// "io/ioutil"
+	// "log"
 	"os"
 )
 
-func CreateBadge(w http.ResponseWriter, r *http.Request) {
+func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 	//TODO: Create badge
 	fmt.Println("CreateBadge....")
+	websession, _ := store.Get(req, "pp-session")
 
-	//TODO: extract data from request
-	advertiserId := "advertiserID" //Dummy..
-	campaignId := "campaignID"     //Dummy..
-	badgeGrpID := "badgeGroupId"   //Dummy..
+	// extract data from request
+	advertiser := websession.Values["id"].(*models.Advertiser)
+	campaigntitle := req.FormValue("campaigntitle")
+	badgeGroupName := req.FormValue("badgeGroupName")
 
 	//Upload image data
 	f := aws.FileUpload{}
 
-	/* dummy code */
-	file, err := os.Open("tumbudu.png")
+	file1, _, err := req.FormFile("uploadedfile")
+
+	if err != nil {
+		fmt.Fprintln(rw, err)
+		return
+	}
+
+	defer file1.Close()
+
+	out, err := os.Create("/tmp/uploadedfile")
+	if err != nil {
+		fmt.Fprintf(rw, "Unable to create the file for writing. Check your write access privilege")
+		return
+	}
+	// write the content from POST to the file
+	_, err = io.Copy(out, file1)
+	if err != nil {
+		fmt.Fprintln(rw, err)
+	}
+
+	out.Close()
+
+	file, err := os.Open("/tmp/uploadedfile")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -61,33 +85,72 @@ func CreateBadge(w http.ResponseWriter, r *http.Request) {
 	}
 	Id := u5.String()
 
-	err1, s3Url := f.UploadToS3(bytes, campaignId, badgeGrpID, Id)
-	if err1 != nil {
-		fmt.Println(err)
-	}
+	// result := models.Advertiser{}
+	// err = c.Find(bson.M{"_id": advertiserId}).One(&result)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// } else {
+	// 	//	result.CreateBadge(campaignId, badgeGrpID, Id, s3Url)
+	// 	fmt.Println(campaignId, badgeGrpID, Id, s3Url)
 
-	session, err := mgo.Dial("mongodb://te:te@flame.mongohq.com:27098/routesq")
-	if err != nil {
-		panic(err)
-	}
-	c := session.DB("routesq").C("advertiser")
+	// }
+	session, err := mgo.Dial(conf.DbURI)
+	c := session.DB(conf.DbName).C("campaigns")
 
-	defer session.Close()
+	campaign := models.Campaign{}
+	fmt.Println("Search for " + campaigntitle)
+	err = c.Find(bson.M{"campaignName": campaigntitle, "advertiser_id": advertiser.Id}).One(&campaign)
+	if err == nil {
+		bc := session.DB(conf.DbName).C("badgeGroup")
+		badgeGroup := models.BadgeGroup{}
+		err = bc.Find(bson.M{"title": badgeGroupName, "_campaign_id": campaign.CampaignId}).One(&badgeGroup)
+		if err == nil {
 
-	result := models.Advertiser{}
-	err = c.Find(bson.M{"_id": advertiserId}).One(&result)
-	if err != nil {
-		log.Fatal(err)
-		//Create will fail..
-		//TODO: ack the error to client
+			err1, s3Url := f.UploadToS3(bytes, campaigntitle, Id)
+			os.Remove("/tmp/uploadedfile")
+			if err1 != nil {
+				fmt.Println(err)
+			}
+			fmt.Println("S3 url" + s3Url)
+
+			session, err := mgo.Dial(conf.DbURI)
+			if err != nil {
+				panic(err)
+			}
+			defer session.Close()
+
+			badge := models.Badge{IamgeURL: s3Url, S3BadgeId: string(Id), Id: Id}
+			//badgeGroup.Badges = append(badgeGroup.Badges, badge)
+			_, err = bc.Upsert(bson.M{"BadgeGroupId": badgeGroup.BadgeGroupId}, bson.M{"$addToSet": bson.M{"badges": badge}})
+
+			// b := session.DB(conf.DbName).C("badges")
+			// err = bc.Find(bson.M{"title": campaigntitle, "_campaign_id": campaign.CampaignId}).One(&badgeGroup)
+			// doc := models.BadgeGroup{BadgeGroupId: bson.NewObjectId(), CampaignId: campaign.CampaignId, Title: title, TargetURL: targetURL}
+			// err = bc.Insert(doc)
+			if err != nil {
+				fmt.Printf("Can't insert document: %v\n", err)
+				render(rw, "error.html")
+			} else {
+				render(rw, "landing.html")
+			}
+		} else {
+			fmt.Println("badge already exist...")
+			fmt.Println(err)
+			render(rw, "error.html")
+		}
 	} else {
-		//	result.CreateBadge(campaignId, badgeGrpID, Id, s3Url)
-		fmt.Println(campaignId, badgeGrpID, Id, s3Url)
-
+		fmt.Println("Campaign does not exit")
+		fmt.Println(err)
+		render(rw, "error.html")
 	}
 
 	session.Close()
-	render(w, "landing.html")
+	render(rw, "landing.html")
+	return
+}
+
+func CreateBadgeT(rw http.ResponseWriter, req *http.Request) {
+	render(rw, "badge.html")
 	return
 }
 

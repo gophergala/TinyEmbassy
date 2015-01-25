@@ -35,10 +35,16 @@ func Routes(rtr *mux.Router) {
 	apiSubrtr1 := rtr.PathPrefix("/campaign").Subrouter()
 	apiSubrtr1.HandleFunc("/createCampaign", controllers.CreateCampaign).Methods("POST").Name("CreateCampaign")
 	apiSubrtr1.HandleFunc("/getCampaignData", controllers.GetCampaignData).Methods("POST").Name("GetCampaignData")
-	apiSubrtr1.HandleFunc("/createCampaignPG", controllers.CPG).Methods("GET").Name("CPG")
+	apiSubrtr1.HandleFunc("/createBadgeGroup", controllers.CreateBadgeGroup).Methods("POST").Name("CreateBadgeGroup")
 
-	apiSubrtr.HandleFunc("/createBadge", controllers.CreateBadge).Methods("POST").Name("CreateBadge")
-	apiSubrtr.HandleFunc("/getBadgeData", controllers.GetBadgeData).Methods("POST").Name("GetBadgeData")
+	//TEST pages
+	apiSubrtr1.HandleFunc("/createCampaignPG", controllers.CPG).Methods("GET").Name("CPG")
+	apiSubrtr1.HandleFunc("/createCampaignBG", controllers.CBG).Methods("GET").Name("CPG")
+
+	apiSubrtr2 := rtr.PathPrefix("/badge").Subrouter()
+	apiSubrtr2.HandleFunc("/createBadgeT", controllers.CreateBadgeT).Methods("GET").Name("CreateBadgeT")
+	apiSubrtr2.HandleFunc("/createBadge", controllers.CreateBadge).Methods("POST").Name("CreateBadge")
+	apiSubrtr2.HandleFunc("/getBadgeData", controllers.GetBadgeData).Methods("POST").Name("GetBadgeData")
 
 	// web routes
 	// apiSubrtr := rtr.PathPrefix("/web").Subrouter()

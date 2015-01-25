@@ -33,6 +33,8 @@ var templates = template.Must(template.ParseFiles(
 	"static/template/SignUp.html",
 	"static/template/logout.html",
 	"static/template/CPG.html",
+	"static/template/CBG.html",
+	"static/template/badge.html",
 ))
 
 func render(w http.ResponseWriter, tmpl string) {

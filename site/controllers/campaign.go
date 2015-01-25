@@ -27,11 +27,11 @@ func CreateCampaign(rw http.ResponseWriter, req *http.Request) {
 
 	advertiser := websession.Values["id"].(*models.Advertiser)
 	fmt.Println(websession)
-	session, err := mgo.Dial("mongodb://te:te@flame.mongohq.com:27098/routesq")
+	session, err := mgo.Dial(conf.DbURI)
 	if err != nil {
 		panic(err)
 	}
-	c := session.DB("routesq").C("campaigns")
+	c := session.DB(conf.DbName).C("campaigns")
 
 	defer session.Close()
 
@@ -59,8 +59,57 @@ func CPG(rw http.ResponseWriter, req *http.Request) {
 	render(rw, "CPG.html")
 	return
 }
-func CreateBadgeGroup(rw http.ResponseWriter, req *http.Request) {
 
+func CBG(rw http.ResponseWriter, req *http.Request) {
+	render(rw, "CBG.html")
+	return
+}
+func CreateBadgeGroup(rw http.ResponseWriter, req *http.Request) {
+	fmt.Println("in Create Badge Group....")
+	targetURL := req.FormValue("targetURL")
+	title := req.FormValue("title")
+	campaignName := req.FormValue("campaignName")
+
+	websession, _ := store.Get(req, "pp-session")
+	fmt.Println(websession)
+
+	advertiser := websession.Values["id"].(*models.Advertiser)
+	fmt.Println(websession)
+	session, err := mgo.Dial(conf.DbURI)
+	if err != nil {
+		panic(err)
+	}
+	c := session.DB(conf.DbName).C("campaigns")
+
+	defer session.Close()
+
+	campaign := models.Campaign{}
+	fmt.Println("Search for " + campaignName)
+	err = c.Find(bson.M{"campaignName": campaignName, "advertiser_id": advertiser.Id}).One(&campaign)
+	if err == nil {
+		bc := session.DB(conf.DbName).C("badgeGroup")
+		badgeGroup := models.BadgeGroup{}
+		err = bc.Find(bson.M{"title": title, "_campaign_id": campaign.CampaignId}).One(&badgeGroup)
+		if err != nil {
+			doc := models.BadgeGroup{BadgeGroupId: bson.NewObjectId(), CampaignId: campaign.CampaignId, Title: title, TargetURL: targetURL}
+			err = bc.Insert(doc)
+			if err != nil {
+				fmt.Printf("Can't insert document: %v\n", err)
+				render(rw, "error.html")
+			} else {
+				render(rw, "landing.html")
+			}
+		} else {
+			fmt.Println("badge already exist...")
+			render(rw, "error.html")
+		}
+	} else {
+		fmt.Println("Campaign does not exit")
+		fmt.Println(err)
+		render(rw, "error.html")
+	}
+	session.Close()
+	return
 }
 
 func GetCampaignData(rw http.ResponseWriter, req *http.Request) {
