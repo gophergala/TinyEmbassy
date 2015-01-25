@@ -104,7 +104,7 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 			defer session.Close()
 
 			badge := models.Badge{IamgeURL: s3Url, S3BadgeId: string(Id), Id: Id}
-			_, err = bc.Upsert(bson.M{"BadgeGroupId": badgeGroup.BadgeGroupId}, bson.M{"$addToSet": bson.M{"badges": badge}})
+			_, err = bc.Upsert(bson.M{"_id": badgeGroup.BadgeGroupId}, bson.M{"$addToSet": bson.M{"badges": badge}})
 			if err != nil {
 				fmt.Printf("Can't insert document: %v\n", err)
 				render(rw, "error.html")
