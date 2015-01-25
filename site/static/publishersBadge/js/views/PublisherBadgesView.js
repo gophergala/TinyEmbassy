@@ -8,11 +8,13 @@ define(['marionette','templates'],function(Marionette,templates){
     return Marionette.ItemView.extend({
         template: templates.publishersBadges,
         events:{
+            "click .badgeThumb":function(){
 
+            }
 
         },
         render:function(campaign){
-            this.$el.html(this.template({groups:campaign.attributes.groups}));
+            this.$el.html(this.template({campaign:campaign.attributes}));
         }
     });
 });

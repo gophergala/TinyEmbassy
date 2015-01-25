@@ -93,12 +93,16 @@ body{
     text-decoration: none;
 }
 .badgeThumb{
-
+cursor: pointer;
+    margin-right: 5px;
 }
 .badgeContainer{
-display: flex;
+
 }
 #badgeContent{
     margin-left: 25%;
     margin-top: 5%;
+}
+.badgeImages{
+    display: inline;
 }
