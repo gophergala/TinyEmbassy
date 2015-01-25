@@ -8,19 +8,15 @@
 package controllers
 
 import (
+	"bufio"
 	"fmt"
+	"github.com/gophergala/tinyembassy/site/controllers/aws"
 	"github.com/gophergala/tinyembassy/site/models"
-	// "github.com/gorilla/sessions"
 	"github.com/nu7hatch/gouuid"
+	"io"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-
-	"bufio"
-	"github.com/gophergala/tinyembassy/site/controllers/aws"
-	"io"
-	// "io/ioutil"
-	// "log"
 	"os"
 )
 
@@ -73,10 +69,7 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 	//Prepare buffer to post
 	buffer := bufio.NewReader(file)
 	_, err = buffer.Read(bytes)
-	/* dummy code till here... */
 
-	// func (this *FileUpload) UploadToS3(data []byte, campaign string, badge string) (err error) {
-	//Generate unique id for uploaded file
 	var u5 *uuid.UUID
 	u5, err = uuid.NewV4()
 	if err != nil {
@@ -85,15 +78,6 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 	}
 	Id := u5.String()
 
-	// result := models.Advertiser{}
-	// err = c.Find(bson.M{"_id": advertiserId}).One(&result)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// } else {
-	// 	//	result.CreateBadge(campaignId, badgeGrpID, Id, s3Url)
-	// 	fmt.Println(campaignId, badgeGrpID, Id, s3Url)
-
-	// }
 	session, err := mgo.Dial(conf.DbURI)
 	c := session.DB(conf.DbName).C("campaigns")
 
@@ -120,13 +104,7 @@ func CreateBadge(rw http.ResponseWriter, req *http.Request) {
 			defer session.Close()
 
 			badge := models.Badge{IamgeURL: s3Url, S3BadgeId: string(Id), Id: Id}
-			//badgeGroup.Badges = append(badgeGroup.Badges, badge)
 			_, err = bc.Upsert(bson.M{"BadgeGroupId": badgeGroup.BadgeGroupId}, bson.M{"$addToSet": bson.M{"badges": badge}})
-
-			// b := session.DB(conf.DbName).C("badges")
-			// err = bc.Find(bson.M{"title": campaigntitle, "_campaign_id": campaign.CampaignId}).One(&badgeGroup)
-			// doc := models.BadgeGroup{BadgeGroupId: bson.NewObjectId(), CampaignId: campaign.CampaignId, Title: title, TargetURL: targetURL}
-			// err = bc.Insert(doc)
 			if err != nil {
 				fmt.Printf("Can't insert document: %v\n", err)
 				render(rw, "error.html")

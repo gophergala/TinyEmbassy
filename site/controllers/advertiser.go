@@ -35,10 +35,7 @@ func Login(rw http.ResponseWriter, req *http.Request) {
 	} else {
 		if result.Pass == encryptedPass {
 			fmt.Println("advertiser exist, password matched..")
-
-			// Set some session values.
 			websession.Values["id"] = result
-			// websession.Values["test"] = "test session value"
 			websession.Save(req, rw)
 			fmt.Println(rw)
 			render(rw, "landing.html")
@@ -63,7 +60,7 @@ func Signup(rw http.ResponseWriter, req *http.Request) {
 	name := req.FormValue("name")
 	fmt.Println(email + pass + name)
 	ecrypedPasswd := pass  //TODO: encrypt password
-	emailVerified := false //TODO:
+	emailVerified := false //TODO: Implement later..
 
 	s, err := mgo.Dial(conf.DbURI)
 	if err != nil {
